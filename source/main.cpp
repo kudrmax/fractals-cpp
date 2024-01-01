@@ -3,7 +3,7 @@
 
 const int W = 960;
 const int H = 540;
-const int it_max = 1000;
+const int it_max = 128;
 float min_re = -2.5;
 float max_re = 1;
 float min_im = -1;
@@ -43,6 +43,25 @@ int main() {
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed)
                 window.close();
+            if (event.type == sf::Event::MouseButtonPressed) {
+                auto zoom = [&](double scale) {
+                    auto new_center_r = min_re + (max_re - min_re) * event.mouseButton.x / W;
+                    auto new_center_im = min_im + (max_im - min_im) * event.mouseButton.y / H;
+
+                    auto delta_re = (max_re - min_re) / 2 / scale;
+                    min_re = new_center_r - delta_re;
+                    max_re = new_center_r + delta_re;
+
+                    auto delta_im = (max_im - min_im) / 2 / scale;
+                    min_im = new_center_im - delta_im;
+                    max_im = new_center_im + delta_im;
+                };
+
+                if (event.mouseButton.button == sf::Mouse::Left)
+                    zoom(5);
+                if (event.mouseButton.button == sf::Mouse::Right)
+                    zoom(1.0 / 5);
+            }
         }
 
         window.clear();

@@ -3,24 +3,28 @@
 
 const int W = 960;
 const int H = 540;
-const int it_max = 1000;
+const int it_max = 500;
 float min_re = -2.5;
 float max_re = 1;
 float min_im = -1;
 float max_im = 1;
 
-sf::Vector2f compute_next_z(sf::Vector2f z, sf::Vector2f c) {
+sf::Vector2f compute_next_z(const sf::Vector2f& z, const sf::Vector2f& c) {
     float zr = z.x * z.x - z.y * z.y + c.x;
     float zi = 2.0f * z.x * z.y + c.y;
-    return sf::Vector2f{ zr, zi };
+    return { zr, zi };
 }
 
-int compute_count_of_iterations(sf::Vector2f c, int it_max) {
+int compute_count_of_iterations(const sf::Vector2f& c, int it_max) {
     auto is_in_radius = [](const sf::Vector2f& z) { return z.x * z.x + z.y * z.y < 4.0; };
     sf::Vector2f z = { 0, 0 };
     int it = 0;
-    for (; it < it_max && is_in_radius(z); it++)
+    while (it < it_max) {
         z = compute_next_z(z, c);
+        if (!is_in_radius(z))
+            break;
+        ++it;
+    }
     return it;
 }
 
@@ -45,6 +49,7 @@ int main() {
             if (event.type == sf::Event::Closed)
                 window.close();
             if (event.type == sf::Event::KeyPressed) {
+                std::cout << "PRESSED" << std::endl;
                 float delta_x = (max_re - min_re) * 0.1;
                 float delta_y = (max_im - min_im) * 0.1;
                 if (event.key.code == sf::Keyboard::Left) {
@@ -63,7 +68,6 @@ int main() {
                     min_im += delta_y;
                     max_im += delta_y;
                 }
-                std::cout << "moved" << std::endl;
             }
             if (event.type == sf::Event::MouseButtonPressed) {
                 auto zoom = [&](double scale) {

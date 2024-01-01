@@ -2,8 +2,9 @@ cmake_minimum_required(VERSION 3.24)
 project(fractals)
 
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_EXTENSIONS OFF)
+#set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fopenmp")
 
 file(GLOB_RECURSE my_src source/*.cpp)
 add_executable(${PROJECT_NAME} ${my_src})

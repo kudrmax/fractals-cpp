@@ -3,7 +3,7 @@
 
 const int W = 960;
 const int H = 540;
-const int it_max = 128;
+const int it_max = 1000;
 float min_re = -2.5;
 float max_re = 1;
 float min_im = -1;
@@ -37,12 +37,34 @@ int main() {
     sf::Texture texture;
     sf::Sprite sprite;
 
+    size_t step_count = 0;
     while (window.isOpen()) {
-        std::cout << "new step" << std::endl;
+        std::cout << "step: " << ++step_count << std::endl;
         sf::Event event;
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed)
                 window.close();
+            if (event.type == sf::Event::KeyPressed) {
+                float delta_x = (max_re - min_re) * 0.1;
+                float delta_y = (max_im - min_im) * 0.1;
+                if (event.key.code == sf::Keyboard::Left) {
+                    min_re -= delta_x;
+                    max_re -= delta_x;
+                }
+                if (event.key.code == sf::Keyboard::Right) {
+                    min_re += delta_x;
+                    max_re += delta_x;
+                }
+                if (event.key.code == sf::Keyboard::Up) {
+                    min_im -= delta_y;
+                    max_im -= delta_y;
+                }
+                if (event.key.code == sf::Keyboard::Down) {
+                    min_im += delta_y;
+                    max_im += delta_y;
+                }
+                std::cout << "moved" << std::endl;
+            }
             if (event.type == sf::Event::MouseButtonPressed) {
                 auto zoom = [&](double scale) {
                     auto new_center_r = min_re + (max_re - min_re) * event.mouseButton.x / W;
